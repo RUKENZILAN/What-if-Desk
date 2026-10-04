@@ -1,5 +1,9 @@
 # What-if-Desk
 One-tap what-if analysis for leaders: see how team, pricing, churn and cost decisions change delivery dates and cash flow.
+
+Page link: https://whatifdesk.vercel.app/
+
+
 # English summary
 
 ** What-If Desk** is a mobile-friendly, bilingual (TR/EN) what-if analysis tool for managers. It is a single HTML file with no build step or server.
