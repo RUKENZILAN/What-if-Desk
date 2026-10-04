@@ -1,0 +1,1188 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Senaryo Masası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Düzen: tek sütun, mobil öncelikli. Üstte sabit sekmeler ve dil anahtarı; soru, hazır senaryolar, sonuç kartı ve kontroller ilk ekrana sığar; grafik ve özet altta. */
+:root{
+  --bg:#EDF1EF; --surface:#FBFCFB; --surface-2:#E2E9E6; --ink:#0F1B18; --muted:#566762; --line:#CDD7D3;
+  --accent:#0B7A69; --on-accent:#FFFFFF; --base:#7B8A85; --band:rgba(11,122,105,.08);
+  --good:#1B7A3A; --good-bg:#DCEFE2; --bad:#B3261E; --bad-bg:#F7DFDC; --warn:#9A5B00; --warn-bg:#F5E7CC;
+  --display:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1412; --surface:#121E1B; --surface-2:#1A2926; --ink:#E6EFEC; --muted:#8FA39D; --line:#263733;
+    --accent:#3CCDB5; --on-accent:#04201B; --base:#7F918B; --band:rgba(60,205,181,.10);
+    --good:#62D18C; --good-bg:#12301F; --bad:#FF8F85; --bad-bg:#3A1815; --warn:#F0B450; --warn-bg:#3A2C10;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1412; --surface:#121E1B; --surface-2:#1A2926; --ink:#E6EFEC; --muted:#8FA39D; --line:#263733;
+  --accent:#3CCDB5; --on-accent:#04201B; --base:#7F918B; --band:rgba(60,205,181,.10);
+  --good:#62D18C; --good-bg:#12301F; --bad:#FF8F85; --bad-bg:#3A1815; --warn:#F0B450; --warn-bg:#3A2C10;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin-inline:auto;padding-inline:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* üst bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{padding-block:10px 10px;display:grid;gap:10px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand b{display:flex;align-items:center;gap:9px;font:600 18px/1 var(--display);letter-spacing:-.01em}
+.lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
+.lang button{border:0;background:var(--surface);color:var(--muted);padding:8px 11px;font:600 12px/1 var(--mono);letter-spacing:.05em;min-height:34px}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.tag{font:500 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:5px 8px;border-radius:4px}
+.seg{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:3px;gap:3px}
+.seg::-webkit-scrollbar{display:none}
+.tab{border:0;background:transparent;color:var(--muted);flex:1 0 auto;padding:10px 14px;border-radius:6px;font:600 13px/1.2 var(--body);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+
+main{padding-block:18px 40px}
+.panel{display:grid;gap:18px}
+.kicker{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.q{margin:8px 0 0;font:600 23px/1.2 var(--display);letter-spacing:-.01em;text-wrap:balance}
+.q b{color:var(--accent);font-weight:700}
+.qs{margin:8px 0 0;font:400 12px/1.5 var(--mono);color:var(--muted)}
+
+/* hazır senaryolar */
+.chips{display:flex;gap:8px;overflow-x:auto;margin-inline:-16px;padding:2px 16px;scrollbar-width:none;scroll-snap-type:x proximity}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;scroll-snap-align:start;min-height:42px;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:500 14px/1.2 var(--body);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* sonuç kartı */
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.hl{margin:0;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hv{margin:8px 0 12px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.num{font:700 58px/1 var(--display);letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.pre,.unit{font:500 20px/1 var(--display);color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font:500 12.5px/1 var(--mono);padding:7px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink);font-variant-numeric:tabular-nums}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.hs{margin:12px 0 0;font-size:13px;color:var(--muted)}
+
+.h3{margin:0 0 6px;font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.h3row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.h3row .h3{margin:0}
+.sub-h{margin:18px 0 4px;font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hint{margin:0 0 4px;font-size:12.5px;color:var(--muted)}
+
+/* kontroller: kaydırıcı ve değer girişi */
+.sl{padding-block:6px}
+.sl-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sl-h label{font-size:14px;min-width:0;flex:1}
+.nin{display:flex;align-items:center;gap:6px;flex:none}
+.ni{width:86px;min-height:34px;text-align:right;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--accent);font:600 13.5px/1 var(--mono);font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
+.ni::-webkit-inner-spin-button,.ni::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.u{font:400 12px/1.2 var(--mono);color:var(--muted);min-width:34px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;margin:0;background:transparent;--p:50%;border-radius:4px}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--accent) var(--p),var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);margin-top:-10px}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+
+/* göstergeler */
+.cells{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+.cell{min-width:0;padding:13px 0;border-bottom:1px solid var(--line)}
+.cell:nth-child(odd){padding-right:14px}
+.cell:nth-child(even){padding-left:14px;border-left:1px solid var(--line)}
+.cl{margin:0;font:500 10.5px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cv{margin:6px 0 2px;font:600 21px/1.15 var(--display);letter-spacing:-.01em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.cv.good{color:var(--good)} .cv.bad{color:var(--bad)}
+.cs{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* grafik */
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font:400 12px/1.2 var(--mono);color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:18px;height:0;border-top:2.5px solid var(--accent)}
+.legend i.b{border-top:2.5px solid var(--base)}
+.legend i.d{border-top:1.5px dashed var(--ink)}
+.legend i.q{height:10px;width:14px;border:0;background:var(--band);outline:1px solid var(--line)}
+.grid{stroke:var(--line);stroke-width:1;fill:none}
+.ax{fill:var(--muted);font:400 10px var(--mono)}
+.ax-acc{fill:var(--accent);font:500 10px var(--mono)}
+.ax-ink{fill:var(--ink);font:500 10px var(--mono)}
+.band{fill:var(--band)}
+.ln-b{fill:none;stroke:var(--base);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.ln-s{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+.area-s{fill:var(--accent);fill-opacity:.1;stroke:none}
+.dot-s{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.dot-b{fill:var(--surface);stroke:var(--base);stroke-width:2}
+.ring-s{fill:var(--surface);stroke:var(--accent);stroke-width:2.2}
+.dl{stroke:var(--ink);stroke-width:1.3;stroke-dasharray:4 3;opacity:.75}
+.sc-b{stroke:var(--base);stroke-width:1.2;stroke-dasharray:2 3}
+.sc-s{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:2 3}
+.bar-g{fill:var(--good)} .bar-r{fill:var(--bad)}
+.zero{stroke:var(--muted);stroke-width:1}
+
+/* özet */
+.sum{margin:0;padding-top:12px;border-top:1px solid var(--line);font-size:15px;line-height:1.55;text-wrap:pretty}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 12px;font:500 13px/1 var(--body);min-height:36px}
+.btn.ghost{margin-top:14px;background:transparent}
+
+details.assump{border-top:1px solid var(--line);padding-top:12px}
+details.assump summary{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:2px;font:600 15px/1.3 var(--body);min-height:40px;justify-content:center}
+details.assump summary::-webkit-details-marker{display:none}
+details.assump summary small{font:400 12.5px/1.3 var(--body);color:var(--muted)}
+.note{margin:14px 0 0;font-size:12.5px;line-height:1.55;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (min-width:480px){.q{font-size:26px}.num{font-size:64px}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <b>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="4.5" cy="12" r="2.6" fill="var(--ink)"/>
+          <path d="M7 12 C12.5 12 13 5.5 20 5.5" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M7 12 C12.5 12 13 18.5 20 18.5" stroke="var(--base)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0.1 5"/>
+        </svg>
+        <span id="brand-t">Senaryo Masası</span>
+      </b>
+      <div class="lang" role="group" aria-label="Dil">
+        <button type="button" data-l="tr" aria-pressed="true">TR</button>
+        <button type="button" data-l="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <nav class="seg" role="tablist" aria-label="Senaryo türü">
+      <button class="tab" role="tab" data-t="team" aria-selected="true" type="button">Ekip</button>
+      <button class="tab" role="tab" data-t="cash" aria-selected="false" type="button">Churn</button>
+      <button class="tab" role="tab" data-t="price" aria-selected="false" type="button">Fiyat</button>
+      <button class="tab" role="tab" data-t="mkt" aria-selected="false" type="button">Pazarlama</button>
+      <button class="tab" role="tab" data-t="pay" aria-selected="false" type="button">Maaş</button>
+      <button class="tab" role="tab" data-t="sup" aria-selected="false" type="button">Tedarik</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel" id="panel-team"></section>
+  <section class="panel" id="panel-cash" hidden></section>
+  <section class="panel" id="panel-price" hidden></section>
+  <section class="panel" id="panel-mkt" hidden></section>
+  <section class="panel" id="panel-pay" hidden></section>
+  <section class="panel" id="panel-sup" hidden></section>
+</main>
+
+<script>
+/* ---------- MODEL ---------- */
+
+/* Haftalık teslim simülasyonu.
+   p: {E mevcut kişi, v kişi başı haftalık verim (puan), coord kişi başı koordinasyon kaybı (0-1),
+       mentor yeni kişi başı mentorluk yükü (0-1), ramp tam verime çıkış haftası, lag işe alım süresi,
+       s0 yeni kişinin ilk hafta verimi (0-1), floor ekip verimi alt sınırı (0-1)}
+   H: eklenen kişi, W: toplam iş (puan). Dönüş: kümülatif iş dizisi ve (kesirli) bitiş haftası. */
+function simTeam(p, H, W, maxW){
+  maxW = maxW || 104;
+  var s0 = p.s0 == null ? 0.2 : p.s0, fl = p.floor == null ? 0.55 : p.floor;
+  var cum = [0], c = 0, finish = null;
+  for (var w = 1; w <= maxW; w++){
+    var hired = H > 0 && w > p.lag;
+    var rf = hired ? Math.min(1, s0 + (1 - s0) * (w - p.lag - 1) / p.ramp) : 0;
+    var drain = hired ? p.mentor * H * (1 - rf) : 0;
+    var fte = Math.max(0.5, p.E - drain + (hired ? H * rf : 0));
+    var n = p.E + (hired ? H : 0);
+    var mult = Math.max(fl, 1 - p.coord * (n - 1));
+    var out = fte * p.v * mult;
+    if (c + out >= W){
+      finish = (w - 1) + (W - c) / out;
+      c = W; cum.push(c);
+      break;
+    }
+    c += out; cum.push(c);
+  }
+  return {cum: cum, finish: finish, W: W};
+}
+
+/* Belirli bir haftaya kadar birikmiş iş (kapsam kısıtı olmadan). */
+function cumAt(p, H, week){
+  var r = simTeam(p, H, 1e12, Math.ceil(week) + 1);
+  var i = Math.floor(week), f = week - i;
+  var a = r.cum[i] || 0, b = r.cum[i + 1] || a;
+  return a + (b - a) * f;
+}
+
+/* Hedef haftaya yetişmek için gereken en az kişi (yoksa null). */
+function minHires(p, W, D){
+  for (var h = 0; h <= 20; h++){
+    var r = simTeam(p, h, W);
+    if (r.finish !== null && r.finish <= D + 1e-9) return h;
+  }
+  return null;
+}
+
+/* Aylık nakit simülasyonu, 12 ay (genel çekirdek).
+   c: {C0 müşteri, arpu aylık gelir/müşteri, cogs %, opex, cac, cash0, dpo baz ödeme vadesi (gün)}
+   fn(m) her ay için {churn %, adds, arpu} ve isteğe bağlı {acq edinme harcaması, cogs %, dpo gün, extra ek gider} döndürür.
+   dso: tahsilat süresi (gün). */
+function simCashM(c, dso, fn){
+  var r = [c.C0 * c.arpu], cust = [c.C0], cash = [c.cash0], net = [0], acq = [0], adds = [0], ex = [0];
+  var ca = [c.cogs / 100 * r[0]], ap = [(c.dpo || 0) / 30 * c.cogs / 100 * r[0]];
+  var L = dso / 30, k = Math.floor(L), f = L - k;
+  function rr(i){ return r[Math.max(0, i)]; }
+  for (var m = 1; m <= 12; m++){
+    var q = fn(m);
+    cust.push(cust[m - 1] * (1 - q.churn / 100) + q.adds);
+    r.push(cust[m] * q.arpu);
+    ca.push((q.cogs == null ? c.cogs : q.cogs) / 100 * r[m]);
+    /* Ödenmemiş tedarikçi faturası bakiyesi: vade uzayınca bakiye büyür, aradaki fark nakit rahatlaması olur. */
+    var dpoM = q.dpo == null ? (c.dpo || 0) : q.dpo;
+    var apNow = dpoM / 30 * ca[m];
+    var cogsPaid = ca[m] - (apNow - ap[m - 1]);
+    ap.push(apNow);
+    var a = q.acq == null ? c.cac * q.adds : q.acq;
+    var e = q.extra || 0;
+    var inflow = (1 - f) * rr(m - k) + f * rr(m - k - 1);
+    var out = c.opex + cogsPaid + a + e;
+    net.push(inflow - out);
+    cash.push(cash[m - 1] + inflow - out);
+    acq.push(a); adds.push(q.adds); ex.push(e);
+  }
+  return {r: r, cust: cust, cash: cash, net: net, acq: acq, adds: adds, ex: ex};
+}
+
+/* Churn senaryosu: sabit churn, yeni müşteri ve tahsilat süresi. */
+function simCash(c, churn, adds, dso){
+  return simCashM(c, dso, function(){ return {churn: churn, adds: adds, arpu: c.arpu}; });
+}
+
+/* Fiyat senaryosu: pr {dPrice %, delay ay, sensChurn puan/%1, sensAdds %/%1}. */
+function simPrice(c, pr){
+  return simCashM(c, c.dso, function(m){
+    var p = m > pr.delay ? pr.dPrice : 0;
+    return {
+      churn: Math.max(0, c.churn + p * pr.sensChurn),
+      adds: Math.max(0, c.adds * (1 - p * pr.sensAdds / 100)),
+      arpu: c.arpu * (1 + p / 100)
+    };
+  });
+}
+
+/* Fiyat artışının 12. ay nakdini baz durumun altına düşürmeyen en yüksek churn duyarlılığı.
+   Zam yoksa null, duyarlılık sıfırken bile kayıpsa 0, 3 puan/%1'de bile kazançlıysa Infinity. */
+function priceBreakEven(c, pr, base12){
+  if (pr.dPrice <= 0) return null;
+  function diff(sv){
+    return simPrice(c, {dPrice: pr.dPrice, delay: pr.delay, sensAdds: pr.sensAdds, sensChurn: sv}).cash[12] - base12;
+  }
+  if (diff(0) <= 0) return 0;
+  if (diff(3) > 0) return Infinity;
+  var lo = 0, hi = 3;
+  for (var i = 0; i < 28; i++){ var mid = (lo + hi) / 2; if (diff(mid) > 0) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+
+/* Pazarlama senaryosu: mk {dBudget %, delay ay, alpha getiri üssü}. */
+function simMkt(c, mk){
+  return simCashM(c, c.dso, function(m){
+    var x = m > mk.delay ? 1 + mk.dBudget / 100 : 1;
+    return {churn: c.churn, adds: c.adds * Math.pow(x, mk.alpha), arpu: c.arpu, acq: c.cac * c.adds * x};
+  });
+}
+
+/* Maaş senaryosu: pay {dRaise % zam, dHead % kadro değişimi, delay ay, persShare opex içindeki personel %,
+   sev tazminat ayı, revEff kadro %1 başına yeni müşteri %'si}. */
+function simPay(c, pay){
+  var pers = c.opex * pay.persShare / 100;
+  return simCashM(c, c.dso, function(m){
+    var on = m > pay.delay;
+    var mult = on ? (1 + pay.dRaise / 100) * (1 + pay.dHead / 100) : 1;
+    var extra = pers * (mult - 1);
+    if (on && m === pay.delay + 1 && pay.dHead < 0) extra += pers * (-pay.dHead / 100) * pay.sev;
+    return {churn: c.churn, adds: c.adds * (on ? 1 + pay.dHead * pay.revEff / 100 : 1), arpu: c.arpu, extra: extra};
+  });
+}
+
+/* 12. ay aylık net akışı sıfırın altına indirmeyen en yüksek zam (%). Baz zaten negatifse null, 100'de bile pozitifse Infinity. */
+function payMaxRaise(c, pay){
+  function net12(rz){
+    return simPay(c, {dRaise: rz, dHead: pay.dHead, delay: pay.delay, persShare: pay.persShare, sev: pay.sev, revEff: pay.revEff}).net[12];
+  }
+  if (net12(0) < 0) return null;
+  if (net12(100) >= 0) return Infinity;
+  var lo = 0, hi = 100;
+  for (var i = 0; i < 28; i++){ var mid = (lo + hi) / 2; if (net12(mid) >= 0) lo = mid; else hi = mid; }
+  return lo;
+}
+
+/* Tedarik senaryosu: sp {dCogs % birim maliyet değişimi, dDpo gün ödeme vadesi uzaması, delay ay, pass % maliyetin fiyata yansıması}. */
+function simSup(c, sp){
+  return simCashM(c, c.dso, function(m){
+    var on = m > sp.delay;
+    var cogsRate = on ? c.cogs * (1 + sp.dCogs / 100) : c.cogs;
+    var arpu = on ? c.arpu * (1 + sp.pass / 100 * (c.cogs / 100) * sp.dCogs / 100) : c.arpu;
+    return {churn: c.churn, adds: c.adds, arpu: arpu, cogs: cogsRate, dpo: (c.dpo || 0) + (on ? sp.dDpo : 0)};
+  });
+}
+
+function niceTicks(min, max, n){
+  var range = max - min;
+  if (range <= 0){ range = Math.abs(max) || 1; min = max - range / 2; max = max + range / 2; }
+  var raw = range / n, pow = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / pow;
+  var step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * pow;
+  var lo = Math.floor(min / step + 1e-9) * step, hi = Math.ceil(max / step - 1e-9) * step;
+  var cnt = Math.round((hi - lo) / step), ticks = [];
+  for (var i = 0; i <= cnt; i++) ticks.push(lo + i * step);
+  return {ticks: ticks, lo: lo, hi: hi, step: step};
+}
+</script>
+
+<script>
+/* ---------- ARAYÜZ ---------- */
+(function(){
+'use strict';
+var $ = function(s, r){ return (r || document).querySelector(s); };
+var KEY = 'senaryo-masasi-v1';
+var GROUPS = ['team', 'cash', 'price', 'mkt', 'pay', 'sup'];
+var LANG = 'tr';
+function L(a, b){ return LANG === 'en' ? b : a; }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* Tüm parametreler: kaydırıcıyla ya da yazarak değiştirilebilir. */
+var DEF = {
+  lang: 'tr', tab: 'team',
+  team: {E:8, W:420, v:4.2, D:12, coord:1.5, mentor:30, ramp:6, startEff:20, floor:55, cost:140000, H:2, scope:0, lag:3},
+  cash: {C0:2400, arpu:2800, churn:2, adds:70, cogs:24, opex:4300000, cac:5000, cash0:12000000, dso:30, dpo:0, dChurn:1, dAdds:0, dDso:0},
+  price: {dPrice:5, delay:0, sensChurn:0.15, sensAdds:0.6},
+  mkt: {dBudget:20, delay:0, alpha:0.6},
+  pay: {dRaise:10, dHead:0, delay:0, persShare:65, sev:3, revEff:0.4},
+  sup: {dCogs:10, dDpo:0, delay:0, pass:0}
+};
+var S = clone(DEF);
+try {
+  var raw = localStorage.getItem(KEY);
+  if (raw){
+    var o = JSON.parse(raw);
+    if (o.lang === 'en' || o.lang === 'tr') S.lang = o.lang;
+    if (GROUPS.indexOf(o.tab) >= 0) S.tab = o.tab;
+    GROUPS.forEach(function(g){
+      if (o[g]) Object.keys(DEF[g]).forEach(function(k){
+        if (typeof o[g][k] === 'number' && isFinite(o[g][k])) S[g][k] = o[g][k];
+      });
+    });
+  }
+} catch(e){}
+LANG = S.lang;
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+/* ----- biçim yardımcıları ----- */
+function nf(n, a, b){
+  a = a || 0; b = b == null ? a : b;
+  return n.toLocaleString(LANG === 'en' ? 'en-US' : 'tr-TR', {minimumFractionDigits: a, maximumFractionDigits: b});
+}
+function f1(n){ return nf(n, 1); }
+function f0(n){ return nf(n, 0); }
+function pc(s){ return LANG === 'en' ? s + '%' : '%' + s; }
+function money(v, d){
+  d = d == null ? 2 : d;
+  var a = Math.abs(v), s = v < 0 ? '−' : '';
+  if (a >= 1e6) return s + '₺' + nf(a / 1e6, d) + L(' Mn', ' M');
+  if (a >= 1e3) return s + '₺' + nf(a / 1e3, 0) + L(' bin', ' K');
+  return s + '₺' + nf(a, 0);
+}
+function sm(v){ if (Math.abs(v) < 500) return '₺0'; return (v > 0 ? '+' : '') + money(v); }
+function cap(s){ return LANG === 'tr' ? s.charAt(0).toLocaleUpperCase('tr') + s.slice(1) : s; }
+function bd(x){ return '<b>' + x + '</b>'; }
+function cell(label, value, sub, cls){
+  return '<div class="cell"><p class="cl">' + label + '</p><p class="cv ' + (cls || '') + '">' + value + '</p><p class="cs">' + sub + '</p></div>';
+}
+function months(){ return L(['Kas','Ara','Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki'], ['Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct']); }
+
+/* ----- kontrol, hazır senaryo ve metin tanımları (dile göre kurulur) ----- */
+var SL = {}, COPY = {}, CO = [];
+function cfg(k, l, min, max, step, u, o){
+  var r = {k: k, l: l, min: min, max: max, step: step, u: u};
+  if (o) for (var x in o) r[x] = o[x];
+  return r;
+}
+function defs(){
+  var wk = L('hf', 'wk'), day = L('gün', 'days'), mo = L('ay', 'mo'), pts = L('puan', 'pts'), ppl = L('kişi', 'people');
+  var startLbl = L('Kaç ay sonra başlar', 'Starts after');
+  CO = [
+    cfg('C0', L('Mevcut müşteri', 'Current customers'), 500, 10000, 100, L('müşteri', 'cust.'), {lo: 1}),
+    cfg('arpu', L('Aylık gelir, müşteri başı', 'Monthly revenue per customer'), 500, 10000, 100, '₺', {lo: 1}),
+    cfg('churn', L('Baz aylık churn', 'Base monthly churn'), 0.5, 8, 0.1, '%', {hi: 100}),
+    cfg('adds', L('Aylık yeni müşteri', 'New customers per month'), 0, 300, 5, L('/ ay', '/ mo')),
+    cfg('cogs', L('Doğrudan maliyet, gelire oranı', 'Direct cost, share of revenue'), 5, 60, 1, '%', {hi: 100}),
+    cfg('opex', L('Aylık sabit gider', 'Monthly fixed expenses'), 1000000, 10000000, 100000, L('₺ Mn', '₺ M'), {sc: 1e6}),
+    cfg('cac', L('Müşteri edinme maliyeti', 'Customer acquisition cost'), 0, 20000, 500, '₺'),
+    cfg('cash0', L('Mevcut nakit', 'Current cash'), 1000000, 40000000, 500000, L('₺ Mn', '₺ M'), {sc: 1e6}),
+    cfg('dso', L('Baz tahsilat süresi', 'Base collection time'), 0, 90, 5, day),
+    cfg('dpo', L('Baz ödeme vadesi, tedarikçi', 'Base supplier payment terms'), 0, 90, 5, day)
+  ];
+  SL.team = {
+    levers: [
+      cfg('H', L('Eklenen kişi', 'People added'), 0, 10, 1, ppl),
+      cfg('scope', L('Kapsam değişimi', 'Scope change'), -30, 30, 5, '%', {lo: -90}),
+      cfg('lag', L('İşe alım süresi', 'Hiring time'), 0, 12, 1, wk)
+    ],
+    assump: [
+      cfg('E', L('Mevcut ekip', 'Current team'), 3, 30, 1, ppl, {lo: 1}),
+      cfg('W', L('Kalan iş (hikâye puanı)', 'Remaining work (story points)'), 100, 1500, 10, pts, {lo: 1}),
+      cfg('v', L('Verim, kişi başı haftalık', 'Velocity per person per week'), 2, 8, 0.1, pts, {lo: 0.1}),
+      cfg('D', L('Hedef teslim (hafta)', 'Target delivery (week)'), 4, 40, 1, wk, {lo: 1}),
+      cfg('coord', L('Koordinasyon kaybı, ek kişi başı', 'Coordination loss per extra person'), 0, 4, 0.1, '%', {hi: 20}),
+      cfg('mentor', L('Mentorluk yükü, yeni kişi başı', 'Mentoring load per new hire'), 0, 100, 5, '%', {hi: 100}),
+      cfg('ramp', L('Tam verime çıkış süresi', 'Ramp-up time'), 1, 16, 1, wk, {lo: 1}),
+      cfg('startEff', L('Yeni kişinin ilk hafta verimi', 'New hire efficiency in week one'), 0, 100, 5, '%', {hi: 100}),
+      cfg('floor', L('Ekip verimi alt sınırı', 'Minimum team efficiency'), 30, 100, 5, '%', {lo: 10, hi: 100}),
+      cfg('cost', L('Aylık kişi maliyeti', 'Monthly cost per person'), 50000, 300000, 5000, L('₺ bin', '₺ K'), {sc: 1000})
+    ],
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {H: 0, scope: 0, lag: 3}},
+      {n: L('+2 kişi', '+2 people'), v: {H: 2, scope: 0, lag: 3}},
+      {n: L('+4 kişi', '+4 people'), v: {H: 4, scope: 0, lag: 3}},
+      {n: L('Kapsam +%15', 'Scope +15%'), v: {H: 0, scope: 15, lag: 3}},
+      {n: L('Kapsam −%20', 'Scope −20%'), v: {H: 0, scope: -20, lag: 3}},
+      {n: L('+2 kişi, 8 haftada gelir', '+2 people, join in 8 wk'), v: {H: 2, scope: 0, lag: 8}},
+      {n: L('+2 kişi, kapsam −%10', '+2 people, scope −10%'), v: {H: 2, scope: -10, lag: 3}}
+    ]
+  };
+  SL.cash = {
+    levers: [
+      cfg('dChurn', L('Aylık churn değişimi', 'Monthly churn change'), -1, 4, 0.5, pts, {lo: -100}),
+      cfg('dAdds', L('Yeni müşteri değişimi', 'New customer change'), -50, 30, 5, '%', {lo: -100}),
+      cfg('dDso', L('Tahsilat süresine ek', 'Extra collection time'), 0, 45, 5, day)
+    ],
+    assump: CO,
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {dChurn: 0, dAdds: 0, dDso: 0}},
+      {n: L('Churn +1 puan', 'Churn +1 pt'), v: {dChurn: 1, dAdds: 0, dDso: 0}},
+      {n: L('Churn +2 puan', 'Churn +2 pts'), v: {dChurn: 2, dAdds: 0, dDso: 0}},
+      {n: L('Yeni müşteri −%25', 'New customers −25%'), v: {dChurn: 0, dAdds: -25, dDso: 0}},
+      {n: L('Tahsilat +15 gün', 'Collection +15 days'), v: {dChurn: 0, dAdds: 0, dDso: 15}},
+      {n: L('Churn +1, satış −%25', 'Churn +1, sales −25%'), v: {dChurn: 1, dAdds: -25, dDso: 0}},
+      {n: L('Churn −1 puan', 'Churn −1 pt'), v: {dChurn: -1, dAdds: 0, dDso: 0}}
+    ]
+  };
+  SL.price = {
+    levers: [
+      cfg('dPrice', L('Fiyat değişimi', 'Price change'), -20, 20, 1, '%', {lo: -90}),
+      cfg('delay', startLbl, 0, 6, 1, mo)
+    ],
+    assump: [
+      cfg('sensChurn', L('Churn duyarlılığı, fiyat %1 başına', 'Churn sensitivity per 1% of price'), 0, 0.6, 0.05, pts),
+      cfg('sensAdds', L('Yeni müşteri duyarlılığı, fiyat %1 başına', 'New-customer sensitivity per 1% of price'), 0, 2, 0.1, '%')
+    ],
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {dPrice: 0, delay: 0}},
+      {n: L('Fiyat +%5', 'Price +5%'), v: {dPrice: 5, delay: 0}},
+      {n: L('Fiyat +%10', 'Price +10%'), v: {dPrice: 10, delay: 0}},
+      {n: L('Fiyat +%15', 'Price +15%'), v: {dPrice: 15, delay: 0}},
+      {n: L('+%10, 6 ay sonra', '+10%, after 6 mo'), v: {dPrice: 10, delay: 6}},
+      {n: L('Fiyat −%10', 'Price −10%'), v: {dPrice: -10, delay: 0}}
+    ]
+  };
+  SL.mkt = {
+    levers: [
+      cfg('dBudget', L('Pazarlama bütçesi değişimi', 'Marketing budget change'), -50, 100, 10, '%', {lo: -100}),
+      cfg('delay', startLbl, 0, 3, 1, mo)
+    ],
+    assump: [
+      cfg('alpha', L('Getiri üssü (1 = doğrusal)', 'Return exponent (1 = linear)'), 0.3, 1, 0.05, '', {lo: 0.1, hi: 1.5})
+    ],
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {dBudget: 0, delay: 0}},
+      {n: L('Bütçe +%20', 'Budget +20%'), v: {dBudget: 20, delay: 0}},
+      {n: L('Bütçe +%50', 'Budget +50%'), v: {dBudget: 50, delay: 0}},
+      {n: L('Bütçe +%100', 'Budget +100%'), v: {dBudget: 100, delay: 0}},
+      {n: L('+%50, 2 ay sonra', '+50%, after 2 mo'), v: {dBudget: 50, delay: 2}},
+      {n: L('Bütçe −%30', 'Budget −30%'), v: {dBudget: -30, delay: 0}}
+    ]
+  };
+  SL.pay = {
+    levers: [
+      cfg('dRaise', L('Maaş zammı', 'Salary raise'), 0, 30, 1, '%', {lo: -50}),
+      cfg('dHead', L('Kadro değişimi', 'Headcount change'), -20, 20, 5, '%', {lo: -90}),
+      cfg('delay', startLbl, 0, 6, 1, mo)
+    ],
+    assump: [
+      cfg('persShare', L('Personel, sabit giderin payı', 'Payroll, share of fixed expenses'), 30, 90, 5, '%', {hi: 100}),
+      cfg('sev', L('Kadro azaltmada tazminat', 'Severance when cutting headcount'), 0, 12, 1, L('aylık maaş', 'mo. pay')),
+      cfg('revEff', L('Kadro %1 değişince yeni müşteri', 'New customers per 1% headcount change'), 0, 1, 0.1, '%')
+    ],
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {dRaise: 0, dHead: 0, delay: 0}},
+      {n: L('Zam +%10', 'Raise +10%'), v: {dRaise: 10, dHead: 0, delay: 0}},
+      {n: L('Zam +%20', 'Raise +20%'), v: {dRaise: 20, dHead: 0, delay: 0}},
+      {n: L('Zam %15, 3 ay sonra', 'Raise 15%, after 3 mo'), v: {dRaise: 15, dHead: 0, delay: 3}},
+      {n: L('Kadro −%10', 'Headcount −10%'), v: {dRaise: 0, dHead: -10, delay: 0}},
+      {n: L('Kadro +%10', 'Headcount +10%'), v: {dRaise: 0, dHead: 10, delay: 0}}
+    ]
+  };
+  SL.sup = {
+    levers: [
+      cfg('dCogs', L('Tedarik ve altyapı maliyeti', 'Supplier and infrastructure cost'), -20, 30, 1, '%', {lo: -90}),
+      cfg('dDpo', L('Ödeme vadesi uzaması', 'Longer payment terms'), 0, 60, 5, day),
+      cfg('delay', startLbl, 0, 6, 1, mo)
+    ],
+    assump: [
+      cfg('pass', L('Maliyetin fiyata yansıtılan payı', 'Cost passed through to price'), 0, 100, 5, '%', {hi: 100})
+    ],
+    presets: [
+      {n: L('Baz durum', 'Base case'), v: {dCogs: 0, dDpo: 0, delay: 0}},
+      {n: L('Maliyet +%10', 'Cost +10%'), v: {dCogs: 10, dDpo: 0, delay: 0}},
+      {n: L('Maliyet +%20', 'Cost +20%'), v: {dCogs: 20, dDpo: 0, delay: 0}},
+      {n: L('Vade +30 gün', 'Terms +30 days'), v: {dCogs: 0, dDpo: 30, delay: 0}},
+      {n: L('Maliyet +%15, vade +30', 'Cost +15%, terms +30'), v: {dCogs: 15, dDpo: 30, delay: 0}},
+      {n: L('Maliyet −%10', 'Cost −10%'), v: {dCogs: -10, dDpo: 0, delay: 0}}
+    ]
+  };
+
+  var legCash = L('<span><i class="b"></i>Baz</span><span><i></i>Senaryo</span><span><i class="q"></i>Önümüzdeki çeyrek</span>',
+                  '<span><i class="b"></i>Base</span><span><i></i>Scenario</span><span><i class="q"></i>Next quarter</span>');
+  var shared = L(' Müşteri, gider ve tahsilat rakamları Şirket verisinden gelir ve tüm senaryolarda ortaktır.', ' Customer, expense and collection figures come from Company data and are shared by all scenarios.');
+  COPY.team = {
+    kicker: L('Senaryo · yazılım teslimi', 'Scenario · software delivery'),
+    chartTitle: L('Teslim eğrisi, birikmiş iş', 'Delivery curve, cumulative work'),
+    legend: L('<span><i class="b"></i>Baz</span><span><i></i>Senaryo</span><span><i class="d"></i>Hedef hafta</span>',
+              '<span><i class="b"></i>Base</span><span><i></i>Scenario</span><span><i class="d"></i>Target week</span>'),
+    note: L('Haftalık simülasyon. Yeni kişiler işe alım süresi dolunca katılır, ilk hafta seçilen verimle başlar ve seçilen sürede %100\'e çıkar. Bu sürede mevcut ekipten mentorluk payı düşülür. Ekip büyüdükçe her ek kişi koordinasyon nedeniyle ekibin verimini biraz düşürür (Brooks yasası), verim seçilen alt sınırın altına inmez.',
+            'Weekly simulation. New people join when the hiring time is over, start at the chosen first-week efficiency and reach 100% over the chosen ramp-up time. During that time the existing team loses some capacity to mentoring. As the team grows, each extra person lowers team efficiency a little through coordination overhead (Brooks law), never below the chosen minimum.')
+  };
+  COPY.cash = {
+    kicker: L('Senaryo · nakit akışı', 'Scenario · cash flow'),
+    chartTitle: L('Nakit bakiyesi, 12 ay', 'Cash balance, 12 months'),
+    legend: legCash,
+    note: L('Aylık simülasyon, başlangıç Kasım 2026. Her ay müşterilerin churn oranı kadarı ayrılır, yeni müşteriler eklenir. Gelir, müşteri sayısı ile müşteri başı gelirin çarpımıdır ve tahsilat süresi kadar gecikmeyle nakde döner. Giderler sabit gider, gelirle orantılı doğrudan maliyet (ödeme vadesiyle) ve müşteri edinme maliyetinden oluşur. Churn değişimi yüzde puan olarak uygulanır, örneğin %2,0 değeri %3,0 olur.',
+            'Monthly simulation starting November 2026. Each month the churn rate of customers leave and new customers join. Revenue is customers times revenue per customer and turns into cash after the collection time. Expenses are fixed expenses, direct cost proportional to revenue (paid after the payment terms) and customer acquisition cost. Churn changes are applied in percentage points, for example 2.0% becomes 3.0%.')
+  };
+  COPY.price = {
+    kicker: L('Senaryo · fiyatlandırma', 'Scenario · pricing'),
+    chartTitle: L('Nakit bakiyesi, 12 ay', 'Cash balance, 12 months'),
+    legend: legCash,
+    note: L('Fiyat değişimi tüm müşterilerin aylık gelirini seçilen aydan itibaren değiştirir. Her %1 fiyat artışı churn\'ü seçtiğin puan kadar yükseltir ve yeni müşteri kazanımını seçtiğin yüzde kadar azaltır. İndirimde aynı etkiler ters yönde işler.', 'A price change changes the monthly revenue of all customers from the chosen month. Each 1% price increase raises churn by the chosen number of points and cuts new customer acquisition by the chosen percentage. A price cut works in the opposite direction.') + shared
+  };
+  COPY.mkt = {
+    kicker: L('Senaryo · pazarlama bütçesi', 'Scenario · marketing budget'),
+    chartTitle: L('Nakit bakiyesi, 12 ay', 'Cash balance, 12 months'),
+    legend: legCash,
+    note: L('Pazarlama harcaması, müşteri edinme maliyeti ile aylık yeni müşteri sayısının çarpımıdır. Bütçe artınca yeni müşteri, bütçe oranının getiri üssü kadar kuvveti oranında artar. Üs 1\'in altındaysa her ek lira daha az müşteri getirir.', 'Marketing spend is the acquisition cost times monthly new customers. When the budget rises, new customers grow by the budget ratio raised to the return exponent. With an exponent below 1, each extra lira brings fewer customers.') + shared
+  };
+  COPY.pay = {
+    kicker: L('Senaryo · personel gideri', 'Scenario · payroll'),
+    chartTitle: L('Nakit bakiyesi, 12 ay', 'Cash balance, 12 months'),
+    legend: legCash,
+    note: L('Personel gideri, sabit giderin seçilen payıdır. Zam ve kadro değişimi bu tutarı seçilen aydan itibaren değiştirir. Kadro azaltılırsa ayrılan çalışanların maaşı kadar seçilen ay sayısında tek seferlik tazminat çıkar. Kadro büyümesi veya küçülmesi yeni müşteri sayısına seçilen oranda yansır.', 'Payroll is the chosen share of fixed expenses. Raises and headcount changes change this amount from the chosen month. If headcount is cut, a one-time severance equal to the chosen number of months of the leaving employees pay is paid. Headcount growth or cuts carry through to new customers at the chosen rate.') + shared
+  };
+  COPY.sup = {
+    kicker: L('Senaryo · tedarik ve altyapı', 'Scenario · supply and infrastructure'),
+    chartTitle: L('Nakit bakiyesi, 12 ay', 'Cash balance, 12 months'),
+    legend: legCash,
+    note: L('Doğrudan maliyet oranı seçilen yüzde kadar değişir. Ödeme vadesi uzarsa tedarikçi faturaları daha geç ödenir. Bu tek seferlik bir nakit rahatlaması yaratır ve vade eski haline dönerse geri verilir. Maliyet değişiminin bir kısmı fiyata yansıtılabilir.', 'The direct cost ratio changes by the chosen percentage. If payment terms stretch, supplier invoices are paid later. This gives a one-time cash relief that is paid back if terms return to normal. Part of a cost change can be passed through to price.') + shared
+  };
+}
+
+/* ----- panel iskeleti ----- */
+function ctrlSets(g){
+  var s = [{id: g + '-levers', idp: g + '-', key: g, list: SL[g].levers}];
+  if (g === 'cash') s.push({id: 'cash-assump', idp: 'cash-', key: 'cash', list: CO});
+  else {
+    s.push({id: g + '-assump', idp: g + '-', key: g, list: SL[g].assump});
+    if (g !== 'team') s.push({id: g + '-co', idp: g + '-co-', key: 'cash', list: CO});
+  }
+  return s;
+}
+function panelHTML(g){
+  var c = COPY[g];
+  var assumpHTML;
+  if (g === 'cash') assumpHTML = '<h4 class="sub-h">' + L('Şirket verisi, tüm senaryolarda ortak', 'Company data, shared by all scenarios') + '</h4><div id="cash-assump"></div>';
+  else {
+    assumpHTML = '<h4 class="sub-h">' + L('Bu senaryonun varsayımları', 'Assumptions for this scenario') + '</h4><div id="' + g + '-assump"></div>';
+    if (g !== 'team') assumpHTML += '<h4 class="sub-h">' + L('Şirket verisi, tüm senaryolarda ortak', 'Company data, shared by all scenarios') + '</h4><div id="' + g + '-co"></div>';
+  }
+  return '<div><p class="kicker"><span>' + c.kicker + '</span><span class="tag">' + L('Örnek veri', 'Sample data') + '</span></p><h2 class="q" id="' + g + '-q"></h2><p class="qs" id="' + g + '-qs"></p></div>' +
+    '<div class="chips" id="' + g + '-chips" role="group" aria-label="' + L('Hazır senaryolar', 'Preset scenarios') + '"></div>' +
+    '<div class="hero" id="' + g + '-hero"></div>' +
+    '<div><h3 class="h3">' + L('Ayarla', 'Adjust') + '</h3><p class="hint">' + L('Kaydır ya da sağdaki kutuya istediğin değeri yaz.', 'Slide, or type any value in the box on the right.') + '</p><div id="' + g + '-levers"></div></div>' +
+    '<div class="cells" id="' + g + '-cells"></div>' +
+    '<div><h3 class="h3">' + c.chartTitle + '</h3><div class="chart" id="' + g + '-chart"></div><div class="legend">' + c.legend + '</div></div>' +
+    '<div><div class="h3row"><h3 class="h3">' + L('Yönetici özeti', 'Executive summary') + '</h3><button class="btn" type="button" id="' + g + '-copy">' + L('Kopyala', 'Copy') + '</button></div><p class="sum" id="' + g + '-sum"></p></div>' +
+    '<details class="assump"><summary>' + L('Varsayımlar', 'Assumptions') + '<small>' + L('Örnek şirket verisi. Her değeri kaydırarak ya da yazarak değiştir.', 'Sample company data. Change any value by sliding or typing.') + '</small></summary>' + assumpHTML +
+    '<button class="btn ghost" type="button" id="' + g + '-reset">' + L('Varsayılanlara dön', 'Reset to defaults') + '</button><p class="note">' + c.note + '</p></details>';
+}
+
+function ctlHTML(c, idp){
+  var id = idp + c.k;
+  return '<div class="sl"><div class="sl-h"><label for="' + id + '">' + c.l + '</label><span class="nin"><input class="ni" id="' + id + '-n" type="number" inputmode="decimal" step="any" aria-label="' + c.l + '"><span class="u">' + (c.u || '') + '</span></span></div>' +
+    '<input id="' + id + '" type="range" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '"></div>';
+}
+function clampV(c, v){
+  var lo = c.lo != null ? c.lo : (c.min >= 0 ? 0 : -1e9), hi = c.hi != null ? c.hi : 1e12;
+  return Math.min(hi, Math.max(lo, v));
+}
+function buildCtrls(g){
+  ctrlSets(g).forEach(function(set){
+    $('#' + set.id).innerHTML = set.list.map(function(c){ return ctlHTML(c, set.idp); }).join('');
+    set.list.forEach(function(c){
+      var id = set.idp + c.k, sc = c.sc || 1, rng = $('#' + id), num = $('#' + id + '-n');
+      rng.addEventListener('input', function(){ S[set.key][c.k] = parseFloat(rng.value); save(); render(); });
+      num.addEventListener('input', function(){
+        var v = parseFloat(num.value);
+        if (!isFinite(v)) return;
+        S[set.key][c.k] = clampV(c, v * sc); save(); render();
+      });
+      num.addEventListener('blur', function(){ syncCtrls(S.tab); });
+    });
+  });
+}
+function syncCtrls(g){
+  ctrlSets(g).forEach(function(set){
+    set.list.forEach(function(c){
+      var id = set.idp + c.k, sc = c.sc || 1, v = S[set.key][c.k];
+      var rng = $('#' + id), num = $('#' + id + '-n');
+      if (!rng) return;
+      if (parseFloat(rng.value) !== v) rng.value = v;
+      var frac = Math.min(1, Math.max(0, (v - c.min) / (c.max - c.min)));
+      rng.style.setProperty('--p', (frac * 100) + '%');
+      if (document.activeElement !== num) num.value = String(+(v / sc).toFixed(4));
+    });
+  });
+}
+function buildChips(g){
+  var list = SL[g].presets, el = $('#' + g + '-chips');
+  el.innerHTML = list.map(function(p, i){ return '<button type="button" class="chip" data-i="' + i + '" aria-pressed="false">' + p.n + '</button>'; }).join('');
+  el.addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if (!b) return;
+    Object.assign(S[g], list[+b.dataset.i].v); save(); render();
+  });
+}
+function syncChips(g){
+  var list = SL[g].presets;
+  Array.prototype.forEach.call($('#' + g + '-chips').children, function(b, i){
+    var on = Object.keys(list[i].v).every(function(k){ return S[g][k] === list[i].v[k]; });
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+function wireExtras(g){
+  $('#' + g + '-reset').addEventListener('click', function(){
+    var sets = ctrlSets(g);
+    sets.slice(1).forEach(function(set){ set.list.forEach(function(c){ S[set.key][c.k] = DEF[set.key][c.k]; }); });
+    save(); render();
+  });
+  $('#' + g + '-copy').addEventListener('click', function(){
+    var btn = this, el = $('#' + g + '-sum');
+    var text = $('#' + g + '-q').textContent + '\n' + el.textContent;
+    function back(){ setTimeout(function(){ btn.textContent = L('Kopyala', 'Copy'); }, 1800); }
+    function manual(){
+      try {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      } catch(e){}
+      btn.textContent = L('Metin seçildi', 'Text selected'); back();
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function(){ btn.textContent = L('Kopyalandı', 'Copied'); back(); }, manual);
+    } catch(e){ manual(); }
+  });
+}
+
+function heroDiff(g, label, d, pills, sub){
+  var pre = Math.abs(d) < 500 ? '₺' : (d < 0 ? '−₺' : '+₺');
+  $('#' + g + '-hero').innerHTML = '<p class="hl">' + label + '</p><p class="hv"><span class="pre">' + pre + '</span><span class="num">' + nf(Math.abs(d) / 1e6, 2) + '</span><span class="unit">' + L('Mn', 'M') + '</span></p>' +
+    '<div class="pills">' + pills + '</div><p class="hs">' + sub + '</p>';
+}
+
+/* ----- EKİP MODELİ ----- */
+function renderTeam(){
+  var t = S.team, H = t.H;
+  var p = {E: t.E, v: t.v, coord: t.coord / 100, mentor: t.mentor / 100, ramp: t.ramp, lag: t.lag, s0: t.startEff / 100, floor: t.floor / 100};
+  var Wb = t.W, Ws = Math.max(1, Math.round(t.W * (1 + t.scope / 100))), D = t.D;
+  var b = simTeam(p, 0, Wb), s = simTeam(p, H, Ws);
+  var fb = b.finish, fs = s.finish;
+  var fbv = fb == null ? 104 : fb, fsv = fs == null ? 104 : fs;
+  var delay = fsv - D, gain = fbv - fsv, days = Math.round(Math.abs(delay) * 5);
+  var capB = t.E * t.v * Math.max(p.floor, 1 - p.coord * (t.E - 1));
+  var capS = (t.E + H) * t.v * Math.max(p.floor, 1 - p.coord * (t.E + H - 1));
+  var costAdd = H * t.cost * Math.max(0, fsv - t.lag) / 4.345;
+  var perGain = (H > 0 && t.scope === 0 && gain > 0.05) ? costAdd / gain : null;
+  var fw = function(f){ return f == null ? '104+' : f1(f); };
+  var wk = L(' hf', ' wk');
+
+  var parts = [], q;
+  if (LANG === 'tr'){
+    if (H > 0) parts.push('yazılım ekibine ' + bd(H + ' kişi') + ' ' + (t.lag !== DEF.team.lag ? bd(t.lag + ' haftada') + ' ' : '') + 'eklenirse');
+    if (t.scope > 0) parts.push('kapsam ' + bd('%' + t.scope) + ' büyürse');
+    if (t.scope < 0) parts.push('kapsam ' + bd('%' + (-t.scope)) + ' küçülürse');
+    q = parts.length ? cap(parts.join(' ve ')) + ' teslim tarihi nasıl etkilenir?' : 'Hiçbir şey değişmezse teslim ne zaman? Bir senaryo seç.';
+  } else {
+    if (H > 0) parts.push('we add ' + bd(H + (H === 1 ? ' person' : ' people')) + (t.lag !== DEF.team.lag ? ' who start in ' + bd(t.lag + ' weeks') : ''));
+    if (t.scope > 0) parts.push('scope grows ' + bd(t.scope + '%'));
+    if (t.scope < 0) parts.push('scope shrinks ' + bd((-t.scope) + '%'));
+    q = parts.length ? 'What happens to the delivery date if ' + parts.join(' and ') + '?' : 'If nothing changes, when do we deliver? Pick a scenario.';
+  }
+  $('#team-q').innerHTML = q;
+  $('#team-qs').textContent = L('Ekip ' + t.E + ' → ' + (t.E + H) + ' kişi · kapsam ' + f0(Wb) + ' → ' + f0(Ws) + ' puan · hedef ' + D + '. hafta',
+                                'Team ' + t.E + ' → ' + (t.E + H) + ' people · scope ' + f0(Wb) + ' → ' + f0(Ws) + ' pts · target week ' + D);
+
+  var cls = delay > 0.05 ? 'bad' : 'good';
+  var status = delay > 0.05 ? f1(delay) + L(' hafta gecikme', ' weeks late') : (delay < -0.05 ? f1(-delay) + L(' hafta erken', ' weeks early') : L('Hedefte', 'On target'));
+  var line = L('Hedef ' + D + '. hafta · ' + (delay > 0.05 ? 'yaklaşık ' + days + ' iş günü gecikme' : delay < -0.05 ? 'yaklaşık ' + days + ' iş günü pay' : 'pay yok'),
+               'Target week ' + D + ' · ' + (delay > 0.05 ? 'about ' + days + ' working days late' : delay < -0.05 ? 'about ' + days + ' working days of buffer' : 'no buffer'));
+  $('#team-hero').innerHTML = '<p class="hl">' + L('Tahmini teslim', 'Estimated delivery') + '</p><p class="hv"><span class="num">' + (fs == null ? '104+' : f1(fs)) + '</span><span class="unit">' + L('hafta', 'weeks') + '</span></p>' +
+    '<div class="pills"><span class="pill ' + cls + '">' + status + '</span><span class="pill">' + L('Baz ', 'Base ') + fw(fb) + wk + '</span></div><p class="hs">' + line + '</p>';
+
+  var dTxt = Math.abs(gain) < 0.05 ? '0,0' + wk : (gain > 0 ? '−' : '+') + f1(Math.abs(gain)) + wk;
+  $('#team-cells').innerHTML =
+    cell(L('Baz\'a göre teslim', 'Delivery vs base'), dTxt, L('Baz ' + fw(fb) + '. hafta', 'Base: week ' + fw(fb)), gain > 0.05 ? 'good' : gain < -0.05 ? 'bad' : '') +
+    cell(L('Ek maliyet', 'Added cost'), money(costAdd), L('maaş, teslime kadar', 'salaries until delivery')) +
+    cell(L('Kazanılan hafta başına', 'Cost per week gained'), perGain == null ? '—' : money(perGain),
+         perGain == null ? (t.scope !== 0 && H > 0 ? L('kapsam da değişiyor', 'scope changes too') : L('kazanç yok', 'no gain')) : L('maliyet / kazanılan hafta', 'cost / week gained')) +
+    cell(L('Haftalık kapasite', 'Weekly capacity'), f0(capS) + L(' puan', ' pts'), L('tam verimde · baz ', 'at full speed · base ') + f0(capB));
+
+  $('#team-chart').innerHTML = chartTeam({b: b, s: s, fb: fb, fs: fs, Wb: Wb, Ws: Ws, D: D});
+
+  var sent = [];
+  sent.push(fs == null ? L('Senaryoda iş 104 hafta içinde bitmiyor.', 'In this scenario the work does not finish within 104 weeks.')
+                       : L('Senaryoda iş ' + f1(fs) + '. haftada bitiyor, baz durumda ' + fw(fb) + '. haftada bitiyordu.', 'In this scenario the work finishes in week ' + f1(fs) + ', versus week ' + fw(fb) + ' in the base case.'));
+  if (delay > 0.05) sent.push(L('Hedef ' + D + '. hafta olduğu için yaklaşık ' + days + ' iş günü (' + f1(delay) + ' hafta) gecikme sürüyor.', 'The target is week ' + D + ', so a delay of about ' + days + ' working days (' + f1(delay) + ' weeks) remains.'));
+  else sent.push(L('Hedef ' + D + '. hafta tutuyor' + (delay < -0.05 ? ', ' + f1(-delay) + ' hafta pay kalıyor.' : '.'), 'The week-' + D + ' target holds' + (delay < -0.05 ? ', with ' + f1(-delay) + ' weeks to spare.' : '.')));
+  if (H > 0){
+    sent.push(L('Yeni ' + H + ' kişi ' + t.lag + '. haftadan sonra katılıyor ve ' + t.ramp + ' haftada tam verime çıkıyor. Bu sürede mevcut ekip mentorluğa zaman ayırıyor, ekip büyüdükçe koordinasyon kaybı artıyor.',
+                'The new ' + H + ' people join after week ' + t.lag + ' and reach full speed in ' + t.ramp + ' weeks. Meanwhile the existing team spends time mentoring, and coordination overhead grows as the team gets bigger.'));
+    if (t.scope === 0) sent.push(gain > 0.05 ? L('Kazanç ' + f1(gain) + ' hafta, ek maliyet ' + money(costAdd) + '.', 'The gain is ' + f1(gain) + ' weeks for an added cost of ' + money(costAdd) + '.')
+                                              : L('Bu kadar kişi eklemek teslimi öne çekmiyor.', 'Adding this many people does not pull the delivery forward.'));
+  }
+  if (delay > 0.05){
+    var need = minHires(p, Ws, D);
+    var cut = Math.max(1, Math.round((1 - cumAt(p, H, D) / Ws) * 100));
+    if (need === null) sent.push(L('Yalnızca kişi eklemek hedefi kurtarmıyor. Hedefi tutturmak için kapsamı yaklaşık %' + cut + ' azaltmak gerekir.', 'Adding people alone will not save the target. Cutting scope by about ' + cut + '% would.'));
+    else sent.push(L('Hedefi tutturmak için en az ' + need + ' kişi gerekir. Alternatif olarak kapsamı yaklaşık %' + cut + ' azaltmak da yeter.', 'Hitting the target takes at least ' + need + ' people. Alternatively, cutting scope by about ' + cut + '% also works.'));
+  }
+  $('#team-sum').textContent = sent.join(' ');
+}
+
+function chartTeam(r){
+  var Wd = 360, Hd = 216, Lm = 40, Rm = 14, T = 24, B = 30;
+  var pw = Wd - Lm - Rm, ph = Hd - T - B;
+  var open = r.fb == null || r.fs == null;
+  var fin = Math.max(r.fb || 0, r.fs || 0);
+  var xMax = Math.max(r.D + 2, Math.min(60, open ? 60 : Math.ceil(fin) + 1));
+  var yt = niceTicks(0, Math.max(r.Wb, r.Ws), 4), yMax = yt.hi;
+  var x = function(w){ return Lm + w / xMax * pw; };
+  var y = function(v){ return T + ph - v / yMax * ph; };
+  var xs = xMax <= 16 ? 2 : xMax <= 32 ? 4 : 8;
+  var o = '<svg viewBox="0 0 ' + Wd + ' ' + Hd + '" role="img" aria-label="' + L('Baz ve senaryo için birikmiş iş eğrisi ve hedef hafta', 'Cumulative work curve for base and scenario with the target week') + '">';
+  o += '<defs><clipPath id="tclip"><rect x="' + Lm + '" y="' + (T - 4) + '" width="' + pw + '" height="' + (ph + 8) + '"/></clipPath></defs>';
+  yt.ticks.forEach(function(v){
+    o += '<line class="grid" x1="' + Lm + '" x2="' + (Lm + pw) + '" y1="' + y(v) + '" y2="' + y(v) + '"/>';
+    o += '<text class="ax" x="' + (Lm - 6) + '" y="' + (y(v) + 3.5) + '" text-anchor="end">' + nf(v) + '</text>';
+  });
+  for (var w = 0; w <= xMax; w += xs){
+    o += '<text class="ax" x="' + x(w) + '" y="' + (T + ph + 16) + '" text-anchor="middle">' + w + '</text>';
+  }
+  o += '<text class="ax" x="' + (Lm + pw) + '" y="' + (Hd - 3) + '" text-anchor="end">' + L('hafta', 'weeks') + '</text>';
+  var same = r.Wb === r.Ws, up = r.Ws > r.Wb;
+  o += '<line class="sc-b" x1="' + Lm + '" x2="' + (Lm + pw) + '" y1="' + y(r.Wb) + '" y2="' + y(r.Wb) + '"/>';
+  o += '<text class="ax" x="' + (Lm + 4) + '" y="' + (y(r.Wb) + (up ? 12 : -4)) + '">' + L('Kapsam ', 'Scope ') + nf(r.Wb) + '</text>';
+  if (!same){
+    o += '<line class="sc-s" x1="' + Lm + '" x2="' + (Lm + pw) + '" y1="' + y(r.Ws) + '" y2="' + y(r.Ws) + '"/>';
+    o += '<text class="ax-acc" x="' + (Lm + pw - 4) + '" y="' + (y(r.Ws) + (up ? -4 : 12)) + '" text-anchor="end">' + L('Senaryo ', 'Scenario ') + nf(r.Ws) + '</text>';
+  }
+  o += '<line class="dl" x1="' + x(r.D) + '" x2="' + x(r.D) + '" y1="' + (T - 2) + '" y2="' + (T + ph) + '"/>';
+  o += '<text class="ax-ink" x="' + x(r.D) + '" y="' + (T - 8) + '" text-anchor="middle">' + L('Hedef ', 'Target ') + r.D + '</text>';
+  function pts(sim){
+    var a = [], n = sim.cum.length;
+    for (var i = 0; i < n; i++){
+      if (i === n - 1 && sim.finish != null) a.push([sim.finish, sim.W]);
+      else a.push([i, sim.cum[i]]);
+    }
+    return a;
+  }
+  function path(a){ return a.map(function(q, i){ return (i ? 'L' : 'M') + x(q[0]).toFixed(1) + ' ' + y(q[1]).toFixed(1); }).join(' '); }
+  var pb = pts(r.b), ps = pts(r.s);
+  o += '<g clip-path="url(#tclip)">';
+  o += '<path class="area-s" d="' + path(ps) + ' L' + x(ps[ps.length - 1][0]).toFixed(1) + ' ' + y(0) + ' L' + x(0) + ' ' + y(0) + ' Z"/>';
+  o += '<path class="ln-b" d="' + path(pb) + '"/>';
+  o += '<path class="ln-s" d="' + path(ps) + '"/>';
+  o += '</g>';
+  if (r.fb != null) o += '<circle class="dot-b" cx="' + x(r.fb) + '" cy="' + y(r.Wb) + '" r="4.5"/>';
+  if (r.fs != null) o += '<circle class="dot-s" cx="' + x(r.fs) + '" cy="' + y(r.Ws) + '" r="5"/>';
+  return o + '</svg>';
+}
+
+/* ----- CHURN VE NAKİT MODELİ ----- */
+function renderCash(){
+  var c = S.cash;
+  var churnB = c.churn, churnS = Math.max(0, c.churn + c.dChurn);
+  var addsB = c.adds, addsS = Math.max(0, c.adds * (1 + c.dAdds / 100));
+  var dsoB = c.dso, dsoS = c.dso + c.dDso;
+  var b = simCash(c, churnB, addsB, dsoB), s = simCash(c, churnS, addsS, dsoS);
+  var qb = b.cash[3], qs = s.cash[3], dq = qs - qb;
+  var netQb = b.cash[3] - b.cash[0], netQs = s.cash[3] - s.cash[0];
+  var d12 = s.cash[12] - b.cash[12];
+  var arr = (s.r[12] - b.r[12]) * 12;
+
+  var parts = [], q;
+  if (LANG === 'tr'){
+    if (c.dChurn > 0) parts.push('aylık churn ' + bd(f1(c.dChurn) + ' puan') + ' artarsa');
+    if (c.dChurn < 0) parts.push('aylık churn ' + bd(f1(-c.dChurn) + ' puan') + ' düşerse');
+    if (c.dAdds < 0) parts.push('yeni müşteri kazanımı ' + bd('%' + f0(-c.dAdds)) + ' düşerse');
+    if (c.dAdds > 0) parts.push('yeni müşteri kazanımı ' + bd('%' + f0(c.dAdds)) + ' artarsa');
+    if (c.dDso > 0) parts.push('tahsilat süresi ' + bd(f0(c.dDso) + ' gün') + ' uzarsa');
+    q = parts.length ? cap(parts.join(' ve ')) + ' nakit akışı önümüzdeki çeyrekte nasıl değişir?' : 'Hiçbir şey değişmezse nakit nasıl ilerler? Bir senaryo seç.';
+  } else {
+    if (c.dChurn > 0) parts.push('monthly churn rises ' + bd(f1(c.dChurn) + ' points'));
+    if (c.dChurn < 0) parts.push('monthly churn falls ' + bd(f1(-c.dChurn) + ' points'));
+    if (c.dAdds < 0) parts.push('new customer acquisition drops ' + bd(f0(-c.dAdds) + '%'));
+    if (c.dAdds > 0) parts.push('new customer acquisition rises ' + bd(f0(c.dAdds) + '%'));
+    if (c.dDso > 0) parts.push('collection time stretches by ' + bd(f0(c.dDso) + ' days'));
+    q = parts.length ? 'What happens to cash flow next quarter if ' + parts.join(' and ') + '?' : 'If nothing changes, how does cash move? Pick a scenario.';
+  }
+  $('#cash-q').innerHTML = q;
+  $('#cash-qs').textContent = L('Churn %' + f1(churnB) + ' → %' + f1(churnS) + ' · yeni müşteri ' + f0(addsB) + ' → ' + f0(addsS) + ' / ay · tahsilat ' + f0(dsoB) + ' → ' + f0(dsoS) + ' gün',
+                                'Churn ' + f1(churnB) + '% → ' + f1(churnS) + '% · new customers ' + f0(addsB) + ' → ' + f0(addsS) + ' / mo · collection ' + f0(dsoB) + ' → ' + f0(dsoS) + ' days');
+
+  var cls = dq < -500 ? 'bad' : dq > 500 ? 'good' : '';
+  var neg = qs < 0;
+  $('#cash-hero').innerHTML = '<p class="hl">' + L('Çeyrek sonu nakit · Ocak sonu', 'Quarter-end cash · end of January') + '</p><p class="hv"><span class="pre">' + (neg ? '−₺' : '₺') + '</span><span class="num">' + nf(Math.abs(qs) / 1e6, 2) + '</span><span class="unit">' + L('Mn', 'M') + '</span></p>' +
+    '<div class="pills"><span class="pill ' + cls + '">' + (Math.abs(dq) < 500 ? L('Baz ile aynı', 'Same as base') : sm(dq) + L(' baz\'a göre', ' vs base')) + '</span><span class="pill">' + L('Baz ', 'Base ') + money(qb) + '</span></div>' +
+    '<p class="hs">' + L('Bugünkü nakit ' + money(c.cash0) + ' · aylık gelir bugün ' + money(b.r[0]), 'Cash today ' + money(c.cash0) + ' · monthly revenue today ' + money(b.r[0])) + '</p>';
+
+  var runway = s.net[12] < 0 ? s.cash[12] / -s.net[12] : null;
+  $('#cash-cells').innerHTML =
+    cell(L('Çeyrek net nakit akışı', 'Quarter net cash flow'), money(netQs), L('Baz ', 'Base ') + money(netQb), netQs < 0 ? 'bad' : '') +
+    cell(L('12. ayda nakit farkı', 'Cash difference, month 12'), sm(d12), L('12. ay nakit ', 'Month-12 cash ') + money(s.cash[12]), d12 < -500 ? 'bad' : d12 > 500 ? 'good' : '') +
+    cell(L('Yıllıklandırılmış gelir', 'Annualized revenue'), sm(arr), L('baz\'a göre, 12. ay çıkışı', 'vs base, month-12 run rate'), arr < -500 ? 'bad' : arr > 500 ? 'good' : '') +
+    cell(L('Müşteri, 12. ay', 'Customers, month 12'), f0(s.cust[12]), L('Baz ', 'Base ') + f0(b.cust[12]) + (runway != null ? L(' · yeter: ', ' · lasts: ') + f1(runway) + L(' ay', ' mo') : ''));
+
+  $('#cash-chart').innerHTML = chartCash(b, s);
+
+  var sent = [];
+  sent.push(L('Senaryoda çeyrek sonu nakit ' + money(qs) + ', baz durumda ' + money(qb) + (Math.abs(dq) < 500 ? '.' : '. Fark ' + sm(dq) + '.'),
+              'In this scenario quarter-end cash is ' + money(qs) + ', versus ' + money(qb) + ' in the base case' + (Math.abs(dq) < 500 ? '.' : '. The difference is ' + sm(dq) + '.')));
+  sent.push(L('12. ayda müşteri sayısı ' + f0(s.cust[12]) + ' (baz ' + f0(b.cust[12]) + '), yıllıklandırılmış gelir farkı ' + sm(arr) + '.',
+              'By month 12 customers reach ' + f0(s.cust[12]) + ' (base ' + f0(b.cust[12]) + '), and annualized revenue changes by ' + sm(arr) + '.'));
+  if ((c.dChurn > 0 || c.dAdds < 0) && Math.abs(d12) > Math.abs(dq) * 1.3) sent.push(L('Etki ilk çeyrekte küçük kalıyor. Kaybedilen müşterilerin geliri her ay birikiyor ve tahsilat gecikmesi başlangıçta tamponluyor. 12. ayda nakit farkı ' + sm(d12) + ' oluyor.',
+              'The effect looks small in the first quarter. Lost revenue from churned customers builds up every month, and collection lag cushions it at first. By month 12 the cash difference is ' + sm(d12) + '.'));
+  else if (c.dDso > 0) sent.push(L('Tahsilat uzayınca nakit bir kez geriye kayıyor ve süre eski haline dönmedikçe geri gelmiyor.', 'A longer collection time shifts cash back once, and it does not return until the time goes back to normal.'));
+  else if (c.dChurn < 0) sent.push(L('Churn düşüşü de aynı şekilde aylar içinde birikir. 12. ayda nakit farkı ' + sm(d12) + ' olur.', 'A churn improvement builds up the same way. By month 12 the cash difference is ' + sm(d12) + '.'));
+  if (runway != null) sent.push(L('12. ayda aylık net akış negatif. Mevcut nakitle yaklaşık ' + f1(runway) + ' ay yeter.', 'In month 12 monthly net flow is negative. Current cash lasts about ' + f1(runway) + ' months.'));
+  $('#cash-sum').textContent = sent.join(' ');
+}
+
+function chartCash(b, s){
+  var Wd = 360, Hd = 284, Lm = 44, Rm = 12, T = 26, Bt = 156;
+  var pw = Wd - Lm - Rm;
+  var x = function(m){ return Lm + m / 12 * pw; };
+  var all = b.cash.concat(s.cash);
+  var yt = niceTicks(Math.min.apply(null, all), Math.max.apply(null, all), 4);
+  var y = function(v){ return Bt - (v - yt.lo) / (yt.hi - yt.lo) * (Bt - T); };
+  var dec = yt.step >= 1e6 ? 0 : yt.step >= 1e5 ? 1 : 2;
+  var MN = months();
+  var o = '<svg viewBox="0 0 ' + Wd + ' ' + Hd + '" role="img" aria-label="' + L('Baz ve senaryo için 12 aylık nakit bakiyesi ve aylık fark', 'Twelve-month cash balance for base and scenario with the monthly difference') + '">';
+  o += '<rect class="band" x="' + x(0) + '" y="' + T + '" width="' + (x(3) - x(0)) + '" height="' + (Bt - T) + '"/>';
+  o += '<text class="ax" x="' + x(1.5) + '" y="' + (T - 9) + '" text-anchor="middle">' + L('Çeyrek', 'Quarter') + '</text>';
+  o += '<text class="ax" x="2" y="' + (T - 9) + '">' + L('₺ Mn', '₺ M') + '</text>';
+  yt.ticks.forEach(function(v){
+    o += '<line class="grid" x1="' + Lm + '" x2="' + (Lm + pw) + '" y1="' + y(v) + '" y2="' + y(v) + '"/>';
+    o += '<text class="ax" x="' + (Lm - 6) + '" y="' + (y(v) + 3.5) + '" text-anchor="end">' + nf(v / 1e6, dec) + '</text>';
+  });
+  function path(arr){ return arr.map(function(v, m){ return (m ? 'L' : 'M') + x(m).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' '); }
+  o += '<path class="ln-b" d="' + path(b.cash) + '"/>';
+  o += '<path class="ln-s" d="' + path(s.cash) + '"/>';
+  o += '<circle class="dot-b" cx="' + x(12) + '" cy="' + y(b.cash[12]) + '" r="4.2"/>';
+  o += '<circle class="ring-s" cx="' + x(3) + '" cy="' + y(s.cash[3]) + '" r="4.2"/>';
+  o += '<circle class="dot-s" cx="' + x(12) + '" cy="' + y(s.cash[12]) + '" r="4.8"/>';
+  var y0 = 224, amp = 28;
+  var diffs = []; for (var m = 1; m <= 12; m++) diffs.push(s.cash[m] - b.cash[m]);
+  var maxAbs = Math.max.apply(null, diffs.map(Math.abs));
+  o += '<text class="ax" x="' + Lm + '" y="184">' + L('Senaryo − baz, nakit', 'Scenario − base, cash') + '</text>';
+  o += '<text class="ax-ink" x="' + (Lm + pw) + '" y="184" text-anchor="end">' + L('12. ay ', 'Month 12 ') + sm(diffs[11]) + '</text>';
+  o += '<line class="zero" x1="' + Lm + '" x2="' + (Lm + pw) + '" y1="' + y0 + '" y2="' + y0 + '"/>';
+  if (maxAbs < 500){
+    o += '<text class="ax" x="' + (Lm + pw / 2) + '" y="' + (y0 - 8) + '" text-anchor="middle">' + L('Senaryo baz ile aynı', 'Scenario equals base') + '</text>';
+  } else {
+    diffs.forEach(function(d, i){
+      var h = Math.abs(d) / maxAbs * amp;
+      o += '<rect class="' + (d >= 0 ? 'bar-g' : 'bar-r') + '" x="' + (x(i + 1) - 6) + '" y="' + (d >= 0 ? y0 - h : y0) + '" width="12" height="' + Math.max(h, 0.5).toFixed(1) + '" rx="1.5"/>';
+    });
+  }
+  for (var k = 1; k <= 12; k++){
+    o += '<text class="ax" x="' + x(k) + '" y="' + (Hd - 8) + '" text-anchor="middle">' + MN[k - 1] + '</text>';
+  }
+  return o + '</svg>';
+}
+
+/* ----- FİYAT MODELİ ----- */
+function renderPrice(){
+  var c = S.cash, pr = S.price, d = pr.dPrice;
+  var b = simCash(c, c.churn, c.adds, c.dso), s = simPrice(c, pr);
+  var churnS = Math.max(0, c.churn + d * pr.sensChurn), addsS = Math.max(0, c.adds * (1 - d * pr.sensAdds / 100));
+  var dq = s.cash[3] - b.cash[3], d12 = s.cash[12] - b.cash[12];
+  var be = priceBreakEven(c, pr, b.cash[12]);
+
+  var q;
+  if (d === 0) q = L('Fiyat değişmezse nakit nasıl ilerler? Bir senaryo seç.', 'If prices stay the same, how does cash move? Pick a scenario.');
+  else if (LANG === 'tr') q = cap('fiyatlar ' + (pr.delay > 0 ? bd(pr.delay + ' ay sonra') + ' ' : '') + bd('%' + f0(Math.abs(d))) + ' ' + (d > 0 ? 'artarsa' : 'düşerse')) + ' gelir ve nakit akışı nasıl değişir?';
+  else q = 'What happens to revenue and cash flow if prices ' + (d > 0 ? 'rise ' : 'fall ') + bd(f0(Math.abs(d)) + '%') + (pr.delay > 0 ? ' after ' + bd(pr.delay + ' months') : '') + '?';
+  $('#price-q').innerHTML = q;
+  $('#price-qs').textContent = L('Fiyat ₺' + f0(c.arpu) + ' → ₺' + f0(c.arpu * (1 + d / 100)) + ' / müşteri · churn %' + f1(c.churn) + ' → %' + f1(churnS) + ' · yeni müşteri ' + f0(c.adds) + ' → ' + f0(addsS) + ' / ay',
+                                 'Price ₺' + f0(c.arpu) + ' → ₺' + f0(c.arpu * (1 + d / 100)) + ' / customer · churn ' + f1(c.churn) + '% → ' + f1(churnS) + '% · new customers ' + f0(c.adds) + ' → ' + f0(addsS) + ' / mo');
+
+  var cls = d12 > 500 ? 'good' : d12 < -500 ? 'bad' : '';
+  heroDiff('price', L('12 ayda nakit farkı', 'Cash difference over 12 months'), d12,
+    '<span class="pill ' + cls + '">' + (Math.abs(dq) < 500 ? L('Çeyrekte fark yok', 'No difference in the quarter') : sm(dq) + L(' çeyrekte', ' in the quarter')) + '</span><span class="pill">' + L('Baz ', 'Base ') + money(b.cash[12]) + '</span>',
+    L('Senaryo 12. ay nakdi ' + money(s.cash[12]) + ' · fiyat etkisi ' + (pr.delay > 0 ? pr.delay + '. aydan sonra' : 'ilk aydan itibaren') + ' işler',
+      'Scenario month-12 cash ' + money(s.cash[12]) + ' · price effect applies ' + (pr.delay > 0 ? 'after month ' + pr.delay : 'from the first month')));
+
+  var beTxt = be == null ? '—' : be === 0 ? '0' : be === Infinity ? L('3+ puan', '3+ pts') : nf(be, 2) + L(' puan', ' pts');
+  var beSub = be == null ? L('yalnızca zamda hesaplanır', 'only calculated for price rises') : L('varsayım ' + nf(pr.sensChurn, 2) + ' · fiyat %1 başına', 'assumed ' + nf(pr.sensChurn, 2) + ' · per 1% of price');
+  $('#price-cells').innerHTML =
+    cell(L('12. ay aylık gelir', 'Monthly revenue, month 12'), money(s.r[12]), L('Baz ', 'Base ') + money(b.r[12]), s.r[12] > b.r[12] + 500 ? 'good' : s.r[12] < b.r[12] - 500 ? 'bad' : '') +
+    cell(L('Müşteri, 12. ay', 'Customers, month 12'), f0(s.cust[12]), L('Baz ', 'Base ') + f0(b.cust[12])) +
+    cell(L('Churn ve yeni müşteri', 'Churn and new customers'), pc(f1(churnS)), L('baz %' + f1(c.churn) + ' · yeni ' + f0(addsS) + ' / ay', 'base ' + f1(c.churn) + '% · new ' + f0(addsS) + ' / mo')) +
+    cell(L('Başa baş churn duyarlılığı', 'Break-even churn sensitivity'), beTxt, beSub, be === 0 ? 'bad' : '');
+
+  $('#price-chart').innerHTML = chartCash(b, s);
+
+  var sent = [];
+  sent.push(L('Senaryoda 12. ay nakdi ' + money(s.cash[12]) + ', baz durumda ' + money(b.cash[12]) + (Math.abs(d12) < 500 ? '.' : '. Fark ' + sm(d12) + '.'),
+              'In this scenario month-12 cash is ' + money(s.cash[12]) + ', versus ' + money(b.cash[12]) + ' in the base case' + (Math.abs(d12) < 500 ? '.' : '. The difference is ' + sm(d12) + '.')));
+  if (d !== 0){
+    sent.push(L('Müşteri başına gelir ₺' + f0(c.arpu) + ' iken ₺' + f0(c.arpu * (1 + d / 100)) + ' olur, ama churn %' + f1(churnS) + ' ve yeni müşteri ' + f0(addsS) + ' / ay olur.',
+                'Revenue per customer goes from ₺' + f0(c.arpu) + ' to ₺' + f0(c.arpu * (1 + d / 100)) + ', but churn becomes ' + f1(churnS) + '% and new customers ' + f0(addsS) + ' / month.'));
+    if (Math.abs(d12) > Math.abs(dq) * 1.3) sent.push(L('Çeyrek içindeki fark ' + sm(dq) + '. Etki aylar içinde birikiyor.', 'The difference within the quarter is ' + sm(dq) + '. The effect builds up over the months.'));
+    if (be === Infinity) sent.push(L('Churn duyarlılığı 3 puan / %1 olsa bile zam kazandırır.', 'Even with a churn sensitivity of 3 points per 1%, the increase pays off.'));
+    else if (be === 0) sent.push(L('Bu varsayımlarla zam, yeni müşteri kaybı yüzünden nakit açısından kaybettiriyor.', 'With these assumptions the increase loses cash because of lost new customers.'));
+    else if (be != null) sent.push(L('Fiyat %1 arttığında churn ' + nf(be, 2) + ' puandan fazla yükselirse kazanç kaybolur. Varsayım ' + nf(pr.sensChurn, 2) + ' puan.',
+                                     'If churn rises by more than ' + nf(be, 2) + ' points for each 1% of price, the gain disappears. The assumption is ' + nf(pr.sensChurn, 2) + ' points.'));
+  }
+  $('#price-sum').textContent = sent.join(' ');
+}
+
+/* ----- PAZARLAMA MODELİ ----- */
+function renderMkt(){
+  var c = S.cash, mk = S.mkt;
+  var b = simCash(c, c.churn, c.adds, c.dso), s = simMkt(c, mk);
+  var x = 1 + mk.dBudget / 100, addsS = c.adds * Math.pow(x, mk.alpha);
+  var spendB = c.cac * c.adds, spendS = spendB * x;
+  var extraSpend = 0, extraCust = 0, diffs = [];
+  for (var m = 1; m <= 12; m++){
+    extraSpend += s.acq[m] - b.acq[m];
+    extraCust += s.adds[m] - b.adds[m];
+    diffs.push(s.cash[m] - b.cash[m]);
+  }
+  var d12 = diffs[11];
+  var minI = diffs.indexOf(Math.min.apply(null, diffs)), back = null;
+  for (var i = minI; i < 12; i++){ if (diffs[i] >= 0){ back = i + 1; break; } }
+  var margin = c.arpu * (1 - c.cogs / 100);
+  var mcac = Math.abs(extraCust) > 0.5 ? extraSpend / extraCust : null;
+  var payback = mcac == null ? null : mcac / margin;
+  var ltvcac = (mcac == null || mcac <= 0) ? null : (margin / (c.churn / 100)) / mcac;
+
+  var q;
+  if (mk.dBudget === 0) q = L('Bütçe değişmezse nakit nasıl ilerler? Bir senaryo seç.', 'If the budget stays the same, how does cash move? Pick a scenario.');
+  else if (LANG === 'tr') q = cap('pazarlama bütçesi ' + (mk.delay > 0 ? bd(mk.delay + ' ay sonra') + ' ' : '') + bd('%' + f0(Math.abs(mk.dBudget))) + ' ' + (mk.dBudget > 0 ? 'artarsa' : 'düşerse')) + ' yeni müşteri sayısı ve nakit nasıl değişir?';
+  else q = 'What happens to new customers and cash if the marketing budget ' + (mk.dBudget > 0 ? 'rises ' : 'falls ') + bd(f0(Math.abs(mk.dBudget)) + '%') + (mk.delay > 0 ? ' after ' + bd(mk.delay + ' months') : '') + '?';
+  $('#mkt-q').innerHTML = q;
+  $('#mkt-qs').textContent = L('Harcama ' + money(spendB) + ' → ' + money(spendS) + ' / ay · yeni müşteri ' + f0(c.adds) + ' → ' + f0(addsS) + ' / ay',
+                               'Spend ' + money(spendB) + ' → ' + money(spendS) + ' / mo · new customers ' + f0(c.adds) + ' → ' + f0(addsS) + ' / mo');
+
+  var pill, pcls;
+  if (mk.dBudget > 0){ if (back != null){ pill = L(back + '. ayda kendini öder', 'Pays back in month ' + back); pcls = 'good'; } else { pill = L('12 ay içinde kendini ödemez', 'Does not pay back within 12 months'); pcls = 'warn'; } }
+  else if (mk.dBudget < 0){ pill = d12 > 500 ? L('12. ayda kazançlı', 'Ahead at month 12') : L('12. ayda zararlı', 'Behind at month 12'); pcls = d12 > 500 ? 'good' : 'bad'; }
+  else { pill = L('Değişiklik yok', 'No change'); pcls = ''; }
+  heroDiff('mkt', L('12 ayda nakit farkı', 'Cash difference over 12 months'), d12,
+    '<span class="pill ' + pcls + '">' + pill + '</span><span class="pill">' + L('Baz ', 'Base ') + money(b.cash[12]) + '</span>',
+    L('Senaryo 12. ay nakdi ' + money(s.cash[12]) + ' · çeyrek sonu fark ' + sm(diffs[2]), 'Scenario month-12 cash ' + money(s.cash[12]) + ' · quarter-end difference ' + sm(diffs[2])));
+
+  $('#mkt-cells').innerHTML =
+    cell(L('Ek harcama, 12 ay', 'Extra spend, 12 months'), sm(extraSpend), L('aylık ' + money(spendS), money(spendS) + ' / month')) +
+    cell(L('Ek müşteri, 12 ay', 'Extra customers, 12 months'), (extraCust >= 0 ? '+' : '−') + f0(Math.abs(extraCust)), L('yeni ' + f0(c.adds) + ' → ' + f0(addsS) + ' / ay', 'new ' + f0(c.adds) + ' → ' + f0(addsS) + ' / mo'), extraCust > 0.5 ? 'good' : extraCust < -0.5 ? 'bad' : '') +
+    cell(L('Ek müşteri maliyeti', 'Cost per extra customer'), mcac == null ? '—' : '₺' + f0(mcac), L('baz CAC ₺', 'base CAC ₺') + f0(c.cac), (mcac != null && mk.dBudget > 0 && mcac > c.cac * 1.5) ? 'bad' : '') +
+    cell(L('Geri ödeme, ek müşteri', 'Payback, extra customer'), payback == null ? '—' : f1(payback) + L(' ay', ' mo'), ltvcac == null ? L('LTV/CAC hesaplanamıyor', 'LTV/CAC n/a') : 'LTV/CAC ' + f1(ltvcac) + 'x', (ltvcac != null && ltvcac < 3 && mk.dBudget > 0) ? 'bad' : '');
+
+  $('#mkt-chart').innerHTML = chartCash(b, s);
+
+  var sent = [];
+  sent.push(L('Senaryoda 12. ay nakdi ' + money(s.cash[12]) + ', baz durumda ' + money(b.cash[12]) + (Math.abs(d12) < 500 ? '.' : '. Fark ' + sm(d12) + '.'),
+              'In this scenario month-12 cash is ' + money(s.cash[12]) + ', versus ' + money(b.cash[12]) + ' in the base case' + (Math.abs(d12) < 500 ? '.' : '. The difference is ' + sm(d12) + '.')));
+  if (mk.dBudget !== 0) sent.push(L('Aylık pazarlama harcaması ' + money(spendB) + ' iken ' + money(spendS) + ' olur, yeni müşteri ' + f0(c.adds) + ' iken ' + f0(addsS) + ' / ay olur.',
+                                    'Monthly marketing spend goes from ' + money(spendB) + ' to ' + money(spendS) + ', and new customers from ' + f0(c.adds) + ' to ' + f0(addsS) + ' / month.'));
+  if (mk.dBudget > 0 && mcac != null){
+    sent.push(L('Getiri azaldığı için ek müşterinin maliyeti ₺' + f0(mcac) + ', baz CAC ₺' + f0(c.cac) + '. Geri ödeme yaklaşık ' + f1(payback) + ' ay.',
+                'Because returns diminish, an extra customer costs ₺' + f0(mcac) + ' versus a base CAC of ₺' + f0(c.cac) + '. Payback is about ' + f1(payback) + ' months.'));
+    if (ltvcac != null) sent.push(ltvcac >= 3 ? L('Ek harcamanın LTV/CAC oranı ' + f1(ltvcac) + ', 3\'ün üstünde, yani verimli.', 'The extra spend has an LTV/CAC of ' + f1(ltvcac) + ', above 3, so it is efficient.')
+                                              : L('Ek harcamanın LTV/CAC oranı ' + f1(ltvcac) + ', 3\'ün altında, yani verimsiz kalıyor.', 'The extra spend has an LTV/CAC of ' + f1(ltvcac) + ', below 3, so it is inefficient.'));
+  }
+  if (mk.dBudget < 0) sent.push(L('Tasarruf nakdi hemen artırır, ama yeni müşteri azaldıkça fark ' + (d12 > 500 ? 'büyümeye devam eder.' : 'kapanır.'),
+                                  'Savings raise cash right away, but as new customers drop the gap ' + (d12 > 500 ? 'keeps growing.' : 'closes.')));
+  $('#mkt-sum').textContent = sent.join(' ');
+}
+
+/* ----- MAAŞ MODELİ ----- */
+function renderPay(){
+  var c = S.cash, pay = S.pay;
+  var b = simCash(c, c.churn, c.adds, c.dso), s = simPay(c, pay);
+  var pers = c.opex * pay.persShare / 100;
+  var mult = (1 + pay.dRaise / 100) * (1 + pay.dHead / 100), persS = pers * mult;
+  var d12 = s.cash[12] - b.cash[12], dq = s.cash[3] - b.cash[3];
+  var sumEx = 0; for (var m = 1; m <= 12; m++) sumEx += s.ex[m];
+  var sevAmt = pay.dHead < 0 ? pers * (-pay.dHead / 100) * pay.sev : 0;
+  var mr = payMaxRaise(c, pay);
+  var addsS = c.adds * (1 + pay.dHead * pay.revEff / 100);
+
+  var parts = [], q;
+  if (LANG === 'tr'){
+    if (pay.dRaise > 0) parts.push('maaşlar ' + (pay.delay > 0 ? bd(pay.delay + ' ay sonra') + ' ' : '') + bd('%' + f0(pay.dRaise)) + ' artarsa');
+    if (pay.dHead > 0) parts.push('kadro ' + bd('%' + f0(pay.dHead)) + ' büyürse');
+    if (pay.dHead < 0) parts.push('kadro ' + bd('%' + f0(-pay.dHead)) + ' küçülürse');
+    q = parts.length ? cap(parts.join(' ve ')) + ' nakit akışı nasıl değişir?' : 'Personel gideri değişmezse nakit nasıl ilerler? Bir senaryo seç.';
+  } else {
+    if (pay.dRaise > 0) parts.push('salaries rise ' + bd(f0(pay.dRaise) + '%') + (pay.delay > 0 ? ' after ' + bd(pay.delay + ' months') : ''));
+    if (pay.dHead > 0) parts.push('headcount grows ' + bd(f0(pay.dHead) + '%'));
+    if (pay.dHead < 0) parts.push('headcount shrinks ' + bd(f0(-pay.dHead) + '%'));
+    q = parts.length ? 'What happens to cash flow if ' + parts.join(' and ') + '?' : 'If payroll stays the same, how does cash move? Pick a scenario.';
+  }
+  $('#pay-q').innerHTML = q;
+  $('#pay-qs').textContent = L('Personel gideri ' + money(pers) + ' → ' + money(persS) + ' / ay · yeni müşteri ' + f0(c.adds) + ' → ' + f0(addsS) + ' / ay',
+                               'Payroll ' + money(pers) + ' → ' + money(persS) + ' / mo · new customers ' + f0(c.adds) + ' → ' + f0(addsS) + ' / mo');
+
+  var posNet = s.net[12] >= 0;
+  heroDiff('pay', L('12 ayda nakit farkı', 'Cash difference over 12 months'), d12,
+    '<span class="pill ' + (posNet ? 'good' : 'bad') + '">' + (posNet ? L('Aylık net akış pozitif', 'Monthly net flow positive') : L('Aylık net akış negatif', 'Monthly net flow negative')) + '</span><span class="pill">' + L('Baz ', 'Base ') + money(b.cash[12]) + '</span>',
+    L('Senaryo 12. ay nakdi ' + money(s.cash[12]) + ' · çeyrek sonu fark ' + sm(dq), 'Scenario month-12 cash ' + money(s.cash[12]) + ' · quarter-end difference ' + sm(dq)));
+
+  $('#pay-cells').innerHTML =
+    cell(L('Aylık personel gideri', 'Monthly payroll'), money(persS), L('Baz ', 'Base ') + money(pers)) +
+    cell(L('Ek personel gideri, 12 ay', 'Extra payroll, 12 months'), money(sumEx), sevAmt > 0 ? L('tazminat dahil ', 'incl. severance ') + money(sevAmt) : L('zam ve kadro etkisi', 'raise and headcount effect')) +
+    cell(L('Aylık net akış, 12. ay', 'Monthly net flow, month 12'), money(s.net[12]), L('Baz ', 'Base ') + money(b.net[12]), s.net[12] < 0 ? 'bad' : '') +
+    cell(L('Net akışı sıfırlayan zam', 'Raise that zeroes net flow'), mr == null ? '—' : mr === Infinity ? pc('100+') : pc(f0(mr)), mr == null ? L('baz net akış zaten negatif', 'base net flow is already negative') : L('bu kadro ve takvimle', 'with this headcount and timing'));
+
+  $('#pay-chart').innerHTML = chartCash(b, s);
+
+  var sent = [];
+  sent.push(L('Senaryoda 12. ay nakdi ' + money(s.cash[12]) + ', baz durumda ' + money(b.cash[12]) + (Math.abs(d12) < 500 ? '.' : '. Fark ' + sm(d12) + '.'),
+              'In this scenario month-12 cash is ' + money(s.cash[12]) + ', versus ' + money(b.cash[12]) + ' in the base case' + (Math.abs(d12) < 500 ? '.' : '. The difference is ' + sm(d12) + '.')));
+  if (mult !== 1) sent.push(L('Aylık personel gideri ' + money(pers) + ' iken ' + money(persS) + ' olur.', 'Monthly payroll goes from ' + money(pers) + ' to ' + money(persS) + '.'));
+  if (sevAmt > 0) sent.push(L('Kadro küçülünce ' + pay.sev + ' aylık tazminat tek seferlik ' + money(sevAmt) + ' çıkış yaratır, tasarruf bundan sonra başlar.',
+                              'Cutting headcount triggers ' + pay.sev + ' months of severance, a one-time outflow of ' + money(sevAmt) + '. Savings only start after that.'));
+  if (pay.dHead !== 0) sent.push(L('Kadro değişimi yeni müşteri kazanımını ' + f0(c.adds) + ' / aydan ' + f0(addsS) + ' / aya getirir.', 'The headcount change takes new customers from ' + f0(c.adds) + ' to ' + f0(addsS) + ' / month.'));
+  if (pay.dRaise > 0 || pay.dHead !== 0){
+    if (mr == null) sent.push(L('Baz durumda 12. ay net akışı zaten negatif.', 'In the base case month-12 net flow is already negative.'));
+    else if (mr === Infinity) sent.push(L('Zam %100 olsa bile 12. ay net akışı pozitif kalır.', 'Even a 100% raise leaves month-12 net flow positive.'));
+    else sent.push(L('Bu kadro ve takvimle zam %' + f0(mr) + '\'i geçerse 12. ayda aylık net akış negatife döner.', 'With this headcount and timing, a raise above ' + f0(mr) + '% turns monthly net flow negative in month 12.'));
+  }
+  $('#pay-sum').textContent = sent.join(' ');
+}
+
+/* ----- TEDARİK MODELİ ----- */
+function renderSup(){
+  var c = S.cash, sp = S.sup;
+  var b = simCash(c, c.churn, c.adds, c.dso), s = simSup(c, sp);
+  var sCost = simSup(c, {dCogs: sp.dCogs, dDpo: 0, delay: sp.delay, pass: sp.pass});
+  var sVade = simSup(c, {dCogs: 0, dDpo: sp.dDpo, delay: sp.delay, pass: sp.pass});
+  var cogsS = c.cogs * (1 + sp.dCogs / 100);
+  var d12 = s.cash[12] - b.cash[12], dq = s.cash[3] - b.cash[3];
+  var dCost = sCost.cash[12] - b.cash[12], dVade = sVade.cash[12] - b.cash[12];
+
+  var parts = [], q;
+  if (LANG === 'tr'){
+    var when = sp.delay > 0 ? bd(sp.delay + ' ay sonra') + ' ' : '';
+    if (sp.dCogs > 0) parts.push('tedarikçi ve altyapı maliyeti ' + when + bd('%' + f0(sp.dCogs)) + ' artarsa');
+    if (sp.dCogs < 0) parts.push('tedarikçi ve altyapı maliyeti ' + when + bd('%' + f0(-sp.dCogs)) + ' düşerse');
+    if (sp.dDpo > 0) parts.push('ödeme vadesi ' + bd(f0(sp.dDpo) + ' gün') + ' uzarsa');
+    q = parts.length ? cap(parts.join(' ve ')) + ' nakit akışı nasıl değişir?' : 'Tedarik koşulları değişmezse nakit nasıl ilerler? Bir senaryo seç.';
+  } else {
+    var whenE = sp.delay > 0 ? ' after ' + bd(sp.delay + ' months') : '';
+    if (sp.dCogs > 0) parts.push('supplier and infrastructure costs rise ' + bd(f0(sp.dCogs) + '%') + whenE);
+    if (sp.dCogs < 0) parts.push('supplier and infrastructure costs fall ' + bd(f0(-sp.dCogs) + '%') + whenE);
+    if (sp.dDpo > 0) parts.push('payment terms stretch by ' + bd(f0(sp.dDpo) + ' days'));
+    q = parts.length ? 'What happens to cash flow if ' + parts.join(' and ') + '?' : 'If supply terms stay the same, how does cash move? Pick a scenario.';
+  }
+  $('#sup-q').innerHTML = q;
+  $('#sup-qs').textContent = L('Doğrudan maliyet %' + f1(c.cogs) + ' → %' + f1(cogsS) + ' · ödeme vadesi ' + f0(c.dpo) + ' → ' + f0(c.dpo + sp.dDpo) + ' gün · fiyata yansıtma %' + f0(sp.pass),
+                               'Direct cost ' + f1(c.cogs) + '% → ' + f1(cogsS) + '% · payment terms ' + f0(c.dpo) + ' → ' + f0(c.dpo + sp.dDpo) + ' days · price pass-through ' + f0(sp.pass) + '%');
+
+  var marginDown = cogsS > c.cogs + 0.05;
+  heroDiff('sup', L('12 ayda nakit farkı', 'Cash difference over 12 months'), d12,
+    '<span class="pill ' + (marginDown ? 'warn' : '') + '">' + L('Brüt marj %' + f1(100 - cogsS), 'Gross margin ' + f1(100 - cogsS) + '%') + '</span><span class="pill">' + L('Baz ', 'Base ') + money(b.cash[12]) + '</span>',
+    L('Senaryo 12. ay nakdi ' + money(s.cash[12]) + ' · çeyrek sonu fark ' + sm(dq), 'Scenario month-12 cash ' + money(s.cash[12]) + ' · quarter-end difference ' + sm(dq)));
+
+  $('#sup-cells').innerHTML =
+    cell(L('Maliyet etkisi, 12 ay', 'Cost effect, 12 months'), sm(dCost), L('oran %' + f1(c.cogs) + ' → %' + f1(cogsS), 'ratio ' + f1(c.cogs) + '% → ' + f1(cogsS) + '%'), dCost < -500 ? 'bad' : dCost > 500 ? 'good' : '') +
+    cell(L('Vade kazancı', 'Terms gain'), sm(dVade), L('tek seferlik, geri döner', 'one-time, reverses'), dVade > 500 ? 'good' : '') +
+    cell(L('Brüt marj', 'Gross margin'), pc(f1(100 - cogsS)), L('baz %', 'base ') + f1(100 - c.cogs) + (LANG === 'en' ? '%' : '')) +
+    cell(L('Çeyrek sonu fark', 'Quarter-end difference'), sm(dq), L('Baz ', 'Base ') + money(b.cash[3]), dq < -500 ? 'bad' : dq > 500 ? 'good' : '');
+
+  $('#sup-chart').innerHTML = chartCash(b, s);
+
+  var sent = [];
+  sent.push(L('Senaryoda 12. ay nakdi ' + money(s.cash[12]) + ', baz durumda ' + money(b.cash[12]) + (Math.abs(d12) < 500 ? '.' : '. Fark ' + sm(d12) + '.'),
+              'In this scenario month-12 cash is ' + money(s.cash[12]) + ', versus ' + money(b.cash[12]) + ' in the base case' + (Math.abs(d12) < 500 ? '.' : '. The difference is ' + sm(d12) + '.')));
+  if (sp.dCogs !== 0) sent.push(L('Doğrudan maliyet oranı %' + f1(c.cogs) + ' iken %' + f1(cogsS) + ' olur, brüt marj %' + f1(100 - cogsS) + '. Maliyet etkisi 12 ayda ' + sm(dCost) + (sp.pass > 0 ? ' (fiyata yansıtma dahil).' : '.'),
+                                  'The direct cost ratio goes from ' + f1(c.cogs) + '% to ' + f1(cogsS) + '%, and gross margin is ' + f1(100 - cogsS) + '%. The cost effect over 12 months is ' + sm(dCost) + (sp.pass > 0 ? ' (including pass-through).' : '.')));
+  if (sp.dCogs > 0 && sp.pass === 0) sent.push(L('Artış müşteriye yansıtılmıyor, bu yüzden marj doğrudan eriyor.', 'The increase is not passed on to customers, so margin shrinks directly.'));
+  if (sp.dDpo > 0) sent.push(L('Ödeme vadesinin ' + sp.dDpo + ' gün uzaması tek seferlik ' + sm(dVade) + ' nakit rahatlaması sağlar. Vade eski haline dönerse bu tutar geri ödenir.',
+                               'Stretching payment terms by ' + sp.dDpo + ' days gives a one-time cash relief of ' + sm(dVade) + '. If terms go back to normal, that amount is paid back.'));
+  $('#sup-sum').textContent = sent.join(' ');
+}
+
+/* ----- genel akış ----- */
+var RENDER = {team: renderTeam, cash: renderCash, price: renderPrice, mkt: renderMkt, pay: renderPay, sup: renderSup};
+function render(){
+  var g = S.tab;
+  syncCtrls(g);
+  syncChips(g);
+  RENDER[g]();
+}
+function applyStatic(){
+  document.documentElement.lang = LANG;
+  $('#brand-t').textContent = L('Senaryo Masası', 'Scenario Desk');
+  var names = {team: L('Ekip', 'Team'), cash: 'Churn', price: L('Fiyat', 'Pricing'), mkt: L('Pazarlama', 'Marketing'), pay: L('Maaş', 'Payroll'), sup: L('Tedarik', 'Supply')};
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(b){ b.textContent = names[b.dataset.t]; });
+  $('.seg').setAttribute('aria-label', L('Senaryo türü', 'Scenario type'));
+  $('.lang').setAttribute('aria-label', L('Dil', 'Language'));
+  Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function(b){ b.setAttribute('aria-pressed', b.dataset.l === LANG ? 'true' : 'false'); });
+}
+function setTab(t){
+  S.tab = t;
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(b){ b.setAttribute('aria-selected', b.dataset.t === t ? 'true' : 'false'); });
+  GROUPS.forEach(function(g){ $('#panel-' + g).hidden = g !== t; });
+  var sel = $('.tab[data-t="' + t + '"]'), bar = $('.seg');
+  if (sel && bar) bar.scrollLeft += sel.getBoundingClientRect().left - bar.getBoundingClientRect().left - (bar.clientWidth - sel.offsetWidth) / 2;
+  save(); render();
+}
+function rebuildAll(){
+  defs();
+  applyStatic();
+  GROUPS.forEach(function(g){
+    $('#panel-' + g).innerHTML = panelHTML(g);
+    buildCtrls(g);
+    buildChips(g);
+    wireExtras(g);
+  });
+  setTab(S.tab);
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(b){
+  b.addEventListener('click', function(){ setTab(b.dataset.t); window.scrollTo(0, 0); });
+});
+Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function(b){
+  b.addEventListener('click', function(){
+    if (b.dataset.l === LANG) return;
+    LANG = b.dataset.l; S.lang = LANG; save(); rebuildAll();
+  });
+});
+rebuildAll();
+})();
+</script>
+
+</body></html>
